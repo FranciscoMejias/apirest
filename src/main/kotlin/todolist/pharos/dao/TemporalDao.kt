@@ -1,6 +1,5 @@
 package todolist.pharos.dao
 
-import todolist.pharos.models.Customer
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -36,5 +35,8 @@ class TemporalDao {
     }
 
     fun getAll(): List<Customer>? = customersListRead
+    fun getFromId(): ApplicationCall? {
+
+    }
 }
 

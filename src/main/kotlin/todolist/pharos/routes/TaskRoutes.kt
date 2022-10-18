@@ -6,6 +6,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import todolist.pharos.models.Task
 
 fun Route.taskRouting() {
     val temporalDao = TemporalDao()
@@ -21,6 +22,7 @@ fun Route.taskRouting() {
             call.respondText("No customer found", status = HttpStatusCode.OK)
         }
         post {
+            val task = call.receive<Task>()
             temporalDao.create(task)
         }
         delete("{id?}") {
@@ -28,6 +30,7 @@ fun Route.taskRouting() {
             temporalDao.delete(id)
         }
         put("{id?}") {
+            val task = call.receive<Task>()
             temporalDao.update(task)
         }
     }

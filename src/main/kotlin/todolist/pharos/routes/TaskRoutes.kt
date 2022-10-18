@@ -17,9 +17,17 @@ fun Route.taskRouting() {
             call.respondText("No customers found", status = HttpStatusCode.OK)
         }
         get("{id?}") {
-            val id = 1
-            temporalDao.getFromId(id) ?:
-            call.respondText("No customer found", status = HttpStatusCode.OK)
+            val id =
+                call.parameters["id"]?.toInt() ?: return@get call.respondText(
+                    "Missing Id",
+                    status = HttpStatusCode.BadRequest
+                )
+            val task =
+                temporalDao.getFromId(id) ?: return@get call.respondText(
+                    "No task found",
+                    status = HttpStatusCode.NotFound
+                )
+            call.respond(task)
         }
         post {
             val task = call.receive<Task>()

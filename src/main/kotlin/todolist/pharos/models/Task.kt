@@ -1,8 +1,7 @@
 package todolist.pharos.models
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 /**
  *  Class for task that we receive from web page
@@ -11,7 +10,7 @@ import kotlinx.serialization.json.Json
  *  @param content Text of the task
  *  @param check Boolean to know if task is checked
  *  @param position Position of the task inside task list
- *  @param priority Enum class that represent the priority in integers
+ *  @param priority Enum class that represent the priority
  *  @see Priority
  *  @since 1.0.0
  */
@@ -24,18 +23,19 @@ class Task(
     val priority: Priority
 ) {
     /**
-     * Enum class to represent the priority in integers
+     * Enum class to represent the priority
      * @author Pharos
-     *
+     * @property NONE Represent priority in "0"
+     * @property LOW Represent priority in "1"
+     * @property MEDIUM Represent priority in "2"
+     * @property HIGH Represent priority in "3"
+     * @since 1.0.0
      */
-    enum class Priority(val value: Int) {
-        NONE(0),
-        LOW(1),
-        MEDIUM(2),
-        HIGH(3)
+    @Serializable
+    enum class Priority {
+        @SerialName("0") NONE(),
+        @SerialName("1") LOW(),
+        @SerialName("2") MEDIUM(),
+        @SerialName("3") HIGH()
     }
-}
-
-fun main() {
-    println(Json.encodeToString(Task(1, "content", true, 10, Task.Priority.HIGH)))
 }

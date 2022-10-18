@@ -1,8 +1,6 @@
 package todolist.pharos.routes
 
 import todolist.pharos.dao.TemporalDao
-import todolist.pharos.models.Customer
-import todolist.pharos.models.customerStorage
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -18,16 +16,19 @@ fun Route.taskRouting() {
             call.respondText("No customers found", status = HttpStatusCode.OK)
         }
         get("{id?}") {
-            temporalDao.getFromId() ?:
+            val id = 1
+            temporalDao.getFromId(id) ?:
             call.respondText("No customer found", status = HttpStatusCode.OK)
         }
         post {
-
-            temporalDao.post(task)
+            temporalDao.create(task)
         }
         delete("{id?}") {
+            val id = 1
+            temporalDao.delete(id)
         }
         put("{id?}") {
+            temporalDao.update(task)
         }
     }
 }

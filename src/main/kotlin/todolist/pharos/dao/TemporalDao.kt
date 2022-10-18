@@ -10,10 +10,7 @@ import kotlin.io.path.Path
 
 /**
  * @author Pharos
- * @param dadesPath path where we save the information files
- * @param taskFilePath file where we store the tasks
- * @param taskListIsEmpty check if the json is empty
- * @param customersListRead create a list inside the json file if it's empty
+ * @since 1.0.0
  */
 
 class TemporalDao {
@@ -38,16 +35,26 @@ class TemporalDao {
         }
     }
 
-    fun getAll(): List<Task> = readFile()
-
     private fun readFile(): List<Task> =
         Json.decodeFromString(taskFilePath.readText())
-
+    /**
+     * @return the json file content
+     */
+    fun getAll(): List<Task> = readFile()
+    /**
+     * @param id unique id to identify inside the tasks
+     * @param list list inside the json file
+     * @return the task relative to the id
+     */
     fun getFromId(id: Int): Task? {
         val list = readFile()
         return list.find { it.id == id }
     }
 
+    /**
+     * @param task reference to task Class
+     * @param taskList list of tasks decoded from json file
+     */
     fun create(task: Task) {
         if (taskListIsEmpty){
             taskFilePath.writeText(Json.encodeToString(listOf(task)))
@@ -59,7 +66,14 @@ class TemporalDao {
     }
 
     fun delete(id: Int): Boolean {
-TODO()
+        if (taskListIsEmpty){
+            null
+        } else {
+            val list2 = readFile()
+            val getId = getFromId(id)
+//            list2.filter { it.id && it.check }
+        }
+        TODO()
     }
 
     fun update(task: Task): Boolean {

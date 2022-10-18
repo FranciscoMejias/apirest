@@ -8,16 +8,25 @@ import todolist.pharos.models.Task
 import kotlin.io.path.*
 import kotlin.io.path.Path
 
+/**
+ * @author Pharos
+ * @param dadesPath path where we save the information files
+ * @param taskFilePath file where we store the tasks
+ * @param taskListIsEmpty check if the json is empty
+ * @param customersListRead create a list inside the json file if it's empty
+ */
+
 class TemporalDao {
     private val dadesPath = Path("dades")
     private val taskFilePath = Path(dadesPath.pathString, "task.json")
+//    private val userFilePath = Path(dadesPath.pathString, "users.json")  Este apartado es de cara al siguiente sprint a la hora de hace inicios de sesion.
 
     private val taskListIsEmpty get() = taskFilePath.readText().isEmpty()
-    private val customersListRead: List<Customer>? get() =
+    private val customersListRead: List<Task>? get() =
         if (taskListIsEmpty) {
             null
         } else {
-            Json.decodeFromString(customerPath.readText())
+            Json.decodeFromString(taskFilePath.readText())
         }
 
     init {
@@ -40,21 +49,21 @@ class TemporalDao {
     }
 
     fun create(task: Task) {
-        if (customerPath.readText().isEmpty()){
-            customerPath.writeText(Json.encodeToString(listOf(customer)))
+        if (taskListIsEmpty){
+            taskFilePath.writeText(Json.encodeToString(listOf(task)))
         } else {
-            val customers: MutableList<Customer> = Json.decodeFromString(customerPath.readText())
-            customers.add(customer)
-            customerPath.writeText(Json.encodeToString(customers))
+            val taskList: MutableList<Task> = Json.decodeFromString(taskFilePath.readText())
+            taskList.add(task)
+            taskFilePath.writeText(Json.encodeToString(taskList))
         }
     }
 
     fun delete(id: Int): Boolean {
-
+TODO()
     }
 
     fun update(task: Task): Boolean {
-
+TODO()
     }
 }
 

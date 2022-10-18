@@ -22,6 +22,8 @@ fun Route.taskRouting() {
             call.respondText("No customer found", status = HttpStatusCode.OK)
         }
         post {
+
+            temporalDao.post(task)
         }
         delete("{id?}") {
         }

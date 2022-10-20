@@ -1,7 +1,10 @@
 package todolist.pharos.models
 
+import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import todolist.pharos.routes.toBoolean
+import kotlin.properties.Delegates
 
 /**
  *  Class for task that we receive from web page
@@ -16,12 +19,33 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 class Task(
-    val id: Int,
+    var id: Int,
     var content: String,
     var check: Boolean,
     var position: Int,
     var priority: Priority
 ) {
+    constructor(parameters: Parameters) : super(this) {
+        var secondContent: String by Delegates.notNull()
+        var secondCheck: Boolean by Delegates.notNull()
+        var secondPosition: Int by Delegates.notNull()
+        var secondPriority: Priority by Delegates.notNull()
+        parameters.forEach { name, valueList ->
+            val value = valueList.toString()
+            when(name) {
+                "content" -> secondContent = value
+                "check" -> secondCheck = value.toBoolean()
+                "position" -> secondPosition = value.toInt()
+                "priority" -> secondPriority = Priority.valueOf(value)
+            }
+        }
+        this.id = 1
+        this.content = secondContent
+        this.check = secondCheck
+        this.position = secondPosition
+        this.priority = secondPriority
+    }
+
     /**
      * Enum class to represent the priority
      * @author Pharos

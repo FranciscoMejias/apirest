@@ -8,15 +8,18 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import todolist.pharos.models.Task
+import kotlin.properties.Delegates
 
 fun Route.taskRouting() {
     val temporalDao = TemporalDao()
 
     route("/task") {
         get {
-            temporalDao.getAll().ifEmpty {
-                return@get call.respondText("No customers found", status = HttpStatusCode.OK)
-            }
+            call.respond(
+                temporalDao.getAll().ifEmpty {
+                    return@get call.respondText("No customers found", status = HttpStatusCode.OK)
+                }
+            )
         }
         get("{id?}") {
             val id = try {
@@ -36,16 +39,16 @@ fun Route.taskRouting() {
                     status = HttpStatusCode.BadRequest
                 )
             }
-            val task =
+            call.respond(
                 temporalDao.getFromId(id) ?: return@get call.respondText(
                     "No task found",
                     status = HttpStatusCode.NotFound
                 )
-            call.respond(task)
+            )
         }
         post {
-            call.receiveParameters().
-            val task = Task()
+            val parameters = call.receiveParameters()
+            val task = Task(parameters)
             temporalDao.create(task)
         }
         delete("{id?}") {
@@ -58,3 +61,10 @@ fun Route.taskRouting() {
         }
     }
 }
+
+private fun String.toBoolean(): Boolean =
+    when(this) {
+        "true" -> true
+        "false" -> false
+        else -> throw NumberFormatException()
+    }

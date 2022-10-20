@@ -20,7 +20,7 @@ class Task(
     var content: String,
     var check: Boolean,
     var position: Int,
-    val priority: Priority
+    var priority: Priority
 ) {
     /**
      * Enum class to represent the priority

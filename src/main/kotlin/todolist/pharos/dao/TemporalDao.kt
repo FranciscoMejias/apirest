@@ -18,15 +18,8 @@ import kotlin.io.path.Path
 class TemporalDao {
     private val dadesPath = Path("dades")
     private val taskFilePath = Path(dadesPath.pathString, "task.json")
-//    private val userFilePath = Path(dadesPath.pathString, "users.json")  Este apartado es de cara al siguiente sprint a la hora de hace inicios de sesion.
 
     private val taskListIsEmpty get() = taskFilePath.readText().isEmpty()
-    private val customersListRead: List<Task>? get() =
-        if (taskListIsEmpty) {
-            null
-        } else {
-            Json.decodeFromString(taskFilePath.readText())
-        }
 
     init {
         if (dadesPath.notExists()) {
@@ -47,12 +40,11 @@ class TemporalDao {
 
     private fun List<Task>.encodeToJson() = Json.encodeToString(this)
 
-    private  fun List<Task>.exist(task: Task) = this.find { it.id == task.id }
-
     /**
      * @return the json file content
      */
     fun getAll(): List<Task> = readTaskFile
+
     /**
      * @param id unique id to identify inside the tasks
      * @param list list inside the json file
@@ -64,15 +56,15 @@ class TemporalDao {
      * @param task reference to task Class
      * @param taskList list of tasks decoded from json file
      */
-    fun create(task: Task) =
+    fun create(task: Task) {
         if (taskListIsEmpty){
             taskFilePath.writeText(Json.encodeToString(listOf(task)))
-            true
         } else {
             val taskList = readTaskFile.toMutableList()
             taskList.add(task)
             rewriteTaskJson(taskList)
         }
+    }
 
     fun delete(id: Int): Boolean {
         val list = readTaskFile.toMutableList()
@@ -86,7 +78,14 @@ class TemporalDao {
 
     fun update(task: Task): Boolean {
         val list = readTaskFile.toMutableList()
-        TODO()
+        list.find { it.id == task.id }?.let {
+            it.content = task.content
+            it.check = task.check
+            it.position = task.position
+            it.priority = task.priority
+        } ?: return false
+        rewriteTaskJson(list)
+        return true
     }
 }
 

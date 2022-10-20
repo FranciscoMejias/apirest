@@ -41,20 +41,20 @@ class TemporalDao {
     private fun List<Task>.encodeToJson() = Json.encodeToString(this)
 
     /**
-     * @return the json file content
+     * @return all the values of Task class
      */
     fun getAll(): List<Task> = readTaskFile
 
     /**
      * @param id unique id to identify inside the tasks
-     * @param list list inside the json file
-     * @return the task relative to the id
+     * @return the task id
      */
     fun getFromId(id: Int) = readTaskFile.find { it.id == id }
 
     /**
      * @param task reference to task Class
-     * @param taskList list of tasks decoded from json file
+     * @return an empty list if not exists
+     * @return a list of tasks if the list already exists
      */
     fun create(task: Task) {
         if (taskListIsEmpty){
@@ -66,6 +66,11 @@ class TemporalDao {
         }
     }
 
+    /**
+     * @param id unique id to identify inside the tasks
+     * @return true if the task is removed correctly
+     * @return false if the task is not removed
+     */
     fun delete(id: Int): Boolean {
         val list = readTaskFile.toMutableList()
         return if (list.removeIf{ it.id == id }) {
@@ -76,6 +81,12 @@ class TemporalDao {
         }
     }
 
+    /**
+     * @param task reference to task Class
+     * @return false if task is not found
+     * @return true if the task was found and rewritten
+
+     */
     fun update(task: Task): Boolean {
         val list = readTaskFile.toMutableList()
         list.find { it.id == task.id }?.let {

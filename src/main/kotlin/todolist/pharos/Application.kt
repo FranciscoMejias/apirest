@@ -1,8 +1,8 @@
 package todolist.pharos
 
 import io.ktor.server.application.*
-import com.example.customer.plugins.*
 import todolist.pharos.plugins.configureRouting
+import todolist.pharos.plugins.configureSerialization
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)

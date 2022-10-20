@@ -7,6 +7,7 @@ import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.*
 import todolist.pharos.models.Task
 import kotlin.properties.Delegates
 
@@ -27,7 +28,7 @@ fun Route.taskRouting() {
                     "Missing Id",
                     status = HttpStatusCode.NoContent
                 )
-            } catch (e: NumberFormatException) {
+            } catch (e: IllegalArgumentException) {
                 return@get call.respondText(
                     "Id not a integer",
                     status = HttpStatusCode.BadRequest
@@ -47,8 +48,7 @@ fun Route.taskRouting() {
             )
         }
         post {
-            val parameters = call.receiveParameters()
-            val task = Task(parameters)
+            val task = Task(temporalDao.newId(), call.receiveParameters())
             temporalDao.create(task)
         }
         delete("{id?}") {
@@ -61,10 +61,3 @@ fun Route.taskRouting() {
         }
     }
 }
-
-private fun String.toBoolean(): Boolean =
-    when(this) {
-        "true" -> true
-        "false" -> false
-        else -> throw NumberFormatException()
-    }

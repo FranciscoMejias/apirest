@@ -33,7 +33,7 @@ class TemporalDao {
     private val readTaskFile: List<Task> get() =
         Json.decodeFromString(taskFilePath.readText())
 
-    private fun newId() = readTaskFile.maxBy { it.id }.id + 1
+    fun newId() = readTaskFile.maxBy { it.id }.id + 1
 
     private fun rewriteTaskJson(list: List<Task>) =
         taskFilePath.writeText(list.encodeToJson())

@@ -1,10 +1,8 @@
 package todolist.pharos.models
 
 import io.ktor.http.*
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import todolist.pharos.routes.toBoolean
-import kotlin.properties.Delegates
+import kotlinx.serialization.*
+import java.lang.IllegalArgumentException
 
 /**
  *  Class for task that we receive from web page
@@ -14,37 +12,29 @@ import kotlin.properties.Delegates
  *  @param check Boolean to know if task is checked
  *  @param position Position of the task inside task list
  *  @param priority Enum class that represent the priority
+ *  @constructor Has secondary constructor to have directly parameters
+ *  @exception IllegalArgumentException When parameters transformation fail
+ *  @exception NullPointerException When miss parameters
  *  @see Priority
- *  @since 1.0.0
+ *  @since 1.1.0
  */
+
 @Serializable
 class Task(
-    var id: Int,
+    val id: Int,
     var content: String,
     var check: Boolean,
     var position: Int,
-    var priority: Priority
+    var priority: Priority,
 ) {
-    constructor(parameters: Parameters) : super(this) {
-        var secondContent: String by Delegates.notNull()
-        var secondCheck: Boolean by Delegates.notNull()
-        var secondPosition: Int by Delegates.notNull()
-        var secondPriority: Priority by Delegates.notNull()
-        parameters.forEach { name, valueList ->
-            val value = valueList.toString()
-            when(name) {
-                "content" -> secondContent = value
-                "check" -> secondCheck = value.toBoolean()
-                "position" -> secondPosition = value.toInt()
-                "priority" -> secondPriority = Priority.valueOf(value)
-            }
-        }
-        this.id = 1
-        this.content = secondContent
-        this.check = secondCheck
-        this.position = secondPosition
-        this.priority = secondPriority
-    }
+
+    constructor(id: Int, parameters: Parameters): this(
+        id,
+        parameters["content"]!!,
+        parameters["check"]?.toBooleanStrict()!!,
+        parameters["position"]?.toInt()!!,
+        Priority.valueOf(parameters["priority"]!!)
+    )
 
     /**
      * Enum class to represent the priority
@@ -57,9 +47,9 @@ class Task(
      */
     @Serializable
     enum class Priority {
-        @SerialName("0") NONE(),
-        @SerialName("1") LOW(),
-        @SerialName("2") MEDIUM(),
-        @SerialName("3") HIGH()
+        @SerialName("0") NONE,
+        @SerialName("1") LOW,
+        @SerialName("2") MEDIUM,
+        @SerialName("3") HIGH
     }
 }

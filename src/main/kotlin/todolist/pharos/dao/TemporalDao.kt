@@ -1,12 +1,14 @@
 package todolist.pharos.dao
 
 import io.ktor.server.application.*
+import io.ktor.server.plugins.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import todolist.pharos.models.Task
 import kotlin.io.path.*
 import kotlin.io.path.Path
+
 
 /**
  * @author Pharos
@@ -35,49 +37,56 @@ class TemporalDao {
         }
     }
 
-    private fun readFile(): List<Task> =
+    private val readTaskFile: List<Task> get() =
         Json.decodeFromString(taskFilePath.readText())
+
+    private fun newId() = readTaskFile.maxBy { it.id }.id + 1
+
+    private fun rewriteTaskJson(list: List<Task>) =
+        taskFilePath.writeText(list.encodeToJson())
+
+    private fun List<Task>.encodeToJson() = Json.encodeToString(this)
+
+    private  fun List<Task>.exist(task: Task) = this.find { it.id == task.id }
+
     /**
      * @return the json file content
      */
-    fun getAll(): List<Task> = readFile()
+    fun getAll(): List<Task> = readTaskFile
     /**
      * @param id unique id to identify inside the tasks
      * @param list list inside the json file
      * @return the task relative to the id
      */
-    fun getFromId(id: Int): Task? {
-        val list = readFile()
-        return list.find { it.id == id }
-    }
+    fun getFromId(id: Int) = readTaskFile.find { it.id == id }
 
     /**
      * @param task reference to task Class
      * @param taskList list of tasks decoded from json file
      */
-    fun create(task: Task) {
+    fun create(task: Task) =
         if (taskListIsEmpty){
             taskFilePath.writeText(Json.encodeToString(listOf(task)))
+            true
         } else {
-            val taskList: MutableList<Task> = Json.decodeFromString(taskFilePath.readText())
+            val taskList = readTaskFile.toMutableList()
             taskList.add(task)
-            taskFilePath.writeText(Json.encodeToString(taskList))
+            rewriteTaskJson(taskList)
         }
-    }
 
     fun delete(id: Int): Boolean {
-        if (taskListIsEmpty){
-            null
+        val list = readTaskFile.toMutableList()
+        return if (list.removeIf{ it.id == id }) {
+            rewriteTaskJson(list)
+            true
         } else {
-            val list2 = readFile()
-            val getId = getFromId(id)
-//            list2.filter { it.id && it.check }
+            false
         }
-        TODO()
     }
 
     fun update(task: Task): Boolean {
-TODO()
+        val list = readTaskFile.toMutableList()
+        TODO()
     }
 }
 

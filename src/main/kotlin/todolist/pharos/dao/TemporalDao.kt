@@ -1,6 +1,5 @@
 package todolist.pharos.dao
 
-import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -39,6 +38,9 @@ class TemporalDao {
         taskFilePath.writeText(list.encodeToJson())
 
     private fun List<Task>.encodeToJson() = Json.encodeToString(this)
+
+    private fun taskAlreadyExists (task: Task) =
+        readTaskFile.find { it.id ==  task.id}
 
     /**
      * @return all the values of Task class
@@ -89,14 +91,15 @@ class TemporalDao {
      */
     fun update(task: Task): Boolean {
         val list = readTaskFile.toMutableList()
-        list.find { it.id == task.id }?.let {
-            it.content = task.content
-            it.check = task.check
-            it.position = task.position
-            it.priority = task.priority
-        } ?: return false
+        taskAlreadyExists(task)?.let {
+            it.changeTaskParameters(task.content,
+                    task.check,
+                    task.position,
+                    task.priority)
+        }
         rewriteTaskJson(list)
         return true
     }
+
 }
 

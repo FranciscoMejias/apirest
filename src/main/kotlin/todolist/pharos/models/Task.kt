@@ -1,8 +1,9 @@
 package todolist.pharos.models
 
-import io.ktor.http.*
-import kotlinx.serialization.*
-import java.lang.IllegalArgumentException
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import todolist.pharos.models.Task.Priority
+import todolist.pharos.models.Task.Priority.*
 
 /**
  *  Class for task that we receive from web page
@@ -12,11 +13,8 @@ import java.lang.IllegalArgumentException
  *  @param check Boolean to know if task is checked
  *  @param position Position of the task inside task list
  *  @param priority Enum class that represent the priority
- *  @constructor Has secondary constructor to have directly parameters
- *  @exception IllegalArgumentException When parameters transformation fail
- *  @exception NullPointerException When miss parameters
  *  @see Priority
- *  @since 1.1.0
+ *  @since 1.2.0
  */
 
 @Serializable
@@ -27,15 +25,6 @@ class Task(
     var position: Int,
     var priority: Priority,
 ) {
-
-    constructor(id: Int, parameters: Parameters): this(
-        id,
-        parameters["content"]!!,
-        parameters["check"]?.toBooleanStrict()!!,
-        parameters["position"]?.toInt()!!,
-        Priority.valueOf(parameters["priority"]!!)
-    )
-
     /**
      * Enum class to represent the priority
      * @author Pharos
@@ -53,3 +42,4 @@ class Task(
         @SerialName("3") HIGH
     }
 }
+

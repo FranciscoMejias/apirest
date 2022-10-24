@@ -48,16 +48,46 @@ fun Route.taskRouting() {
             )
         }
         post {
-            val task = Task(temporalDao.newId(), call.receiveParameters())
+            val task = try {
+                Task(temporalDao.newId(), call.receiveParameters())
+            } catch (e: IllegalArgumentException) {
+                return@post call.respondText(
+                    "Failed at parse parameters",
+                    status = HttpStatusCode.BadRequest
+                )
+            }
             temporalDao.create(task)
+            call.respond(
+                temporalDao.getFromId(task.id) ?: return@post call.respondText(
+                    "Internal Server Error",
+                    status = HttpStatusCode.InternalServerError
+                )
+            )
         }
         delete("{id?}") {
-            val id = 1
+            val id = try {
+                call.parameters["id"]?.toInt() ?: return@delete call.respondText(
+                    "Missing Id",
+                    status = HttpStatusCode.NoContent
+                )
+            } catch (e: IllegalArgumentException) {
+                return@delete call.respondText(
+                    "Id not a integer",
+                    status = HttpStatusCode.BadRequest
+                )
+            }
             temporalDao.delete(id)
         }
         put("{id?}") {
-            val task = call.receive<Task>()
-            temporalDao.update(task)
+
+            val task = try {
+                Task(id, call.receiveParameters())
+            } catch (e: IllegalArgumentException) {
+                return@put call.respondText(
+                    "Failed at parse parameters",
+                    status = HttpStatusCode.BadRequest
+                )
+            }
         }
     }
 }

@@ -5,6 +5,8 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import todolist.pharos.models.Task
+import todolist.pharos.models.TaskData
+import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.io.path.Path
 
@@ -14,9 +16,10 @@ import kotlin.io.path.Path
  * @since 1.0.0
  */
 
-class TemporalDao {
-    private val dadesPath = Path("dades")
-    private val taskFilePath = Path(dadesPath.pathString, "task.json")
+class TemporalDao(
+    private val dadesPath : Path = Path("dades"),
+    private val taskFilePath : Path = Path(dadesPath.pathString, "task.json")
+) {
 
     private val taskListIsEmpty get() = taskFilePath.readText().isEmpty()
 
@@ -43,7 +46,7 @@ class TemporalDao {
         readTaskFile.find { it.id ==  task.id}
 
     /**
-     * @return all the values of Task class
+     * @return All the values of Task class
      */
     fun getAll(): List<Task> = readTaskFile
 
@@ -58,7 +61,21 @@ class TemporalDao {
      * @return an empty list if not exists
      * @return a list of tasks if the list already exists
      */
-    fun create(task: Task) {
+
+
+    fun taskCreation(taskData: TaskData) : Task{
+        val task = Task(
+            newId(),
+            taskData.content,
+            taskData.check,
+            taskData.position,
+            taskData.priority
+        )
+        return task
+    }
+
+    fun create(taskData: TaskData): Task {
+        val task = taskCreation(taskData)
         if (taskListIsEmpty){
             taskFilePath.writeText(Json.encodeToString(listOf(task)))
         } else {
@@ -66,6 +83,7 @@ class TemporalDao {
             taskList.add(task)
             rewriteTaskJson(taskList)
         }
+        return task
     }
 
     /**

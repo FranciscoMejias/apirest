@@ -25,7 +25,7 @@ class Task(
     var position: Int,
     var priority: Priority,
 ) {
-    fun changeTaskParameters(content: String, check: Boolean, position: Int, priority: Task.Priority) {
+    fun changeTaskParameters(content: String, check: Boolean, position: Int, priority: Priority) {
         this.content = content
         this.check = check
         this.position = position

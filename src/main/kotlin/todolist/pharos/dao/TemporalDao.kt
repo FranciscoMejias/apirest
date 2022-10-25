@@ -29,8 +29,6 @@ class TemporalDao(
         }
     }
 
-//    TODO(Revisar Kdoc, frases empiezan con mayuscula y demas)
-
     private val readTaskFile: List<Task> get() =
         Json.decodeFromString(taskFilePath.readText())
 
@@ -47,15 +45,14 @@ class TemporalDao(
     fun getAll(): List<Task> = readTaskFile
 
     /**
-     * @param id unique id to identify inside the tasks
-     * @return the task id
+     * @param id Unique id to identify inside the tasks
+     * @return The task id
      */
     fun getFromId(id: Int) = readTaskFile.find { it.id == id }
 
     /**
-     * @param taskData reference to task Class
-     * @return an empty list if not exists
-     * @return a list of tasks if the list already exists
+     * @param taskData Reference to taskData Class
+     * @return A task
      */
     private fun taskCreation(taskData: TaskData): Task =
         Task(
@@ -66,7 +63,11 @@ class TemporalDao(
             taskData.priority
         )
 
-//    TODO(Kdoc)
+    /**
+     * @param taskData Reference to taskData Class
+     * @return An empty list if not exists
+     * @return A list of tasks if the list already exists
+     */
     fun create(taskData: TaskData): Task {
         val task = taskCreation(taskData)
         if (taskListIsEmpty){
@@ -80,9 +81,9 @@ class TemporalDao(
     }
 
     /**
-     * @param id unique id to identify inside the tasks
-     * @return true if the task is removed correctly
-     * @return false if the task is not removed
+     * @param id Unique id to identify inside the tasks
+     * @return True if the task is removed correctly
+     * @return False if the task is not removed
      */
     fun delete(id: Int): Boolean {
         val list = readTaskFile.toMutableList()
@@ -95,9 +96,9 @@ class TemporalDao(
     }
 
     /**
-     * @param task reference to task Class
-     * @return false if task is not found
-     * @return true if the task was found and rewritten
+     * @param task Reference to task Class
+     * @return False if task is not found
+     * @return True if the task was found and rewritten
      */
     fun update(task: Task): Boolean =
         if (!readTaskFile.contains(task)) {

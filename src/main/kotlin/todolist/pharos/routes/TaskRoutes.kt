@@ -18,6 +18,7 @@ fun Route.taskRouting() {
                 temporalDao.getAll()
             )
         }
+
         get("{id?}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@get call.badRequest()
             call.respond(
@@ -27,6 +28,7 @@ fun Route.taskRouting() {
                 )
             )
         }
+
         post {
             try {
                 val taskData = call.receive<TaskData>()
@@ -37,13 +39,16 @@ fun Route.taskRouting() {
                 return@post call.badRequest()
             }
         }
+
         delete("{id?}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@delete call.badRequest()
             temporalDao.delete(id)
         }
+
         put("{id?}") {
             try {
                 val task = call.receive<Task>()
+                temporalDao.update(task)
                 call.respondText(
                     "Updates successfully",
                     status = HttpStatusCode.OK

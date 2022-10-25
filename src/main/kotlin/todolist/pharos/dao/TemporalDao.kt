@@ -5,6 +5,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import todolist.pharos.models.Task
+import todolist.pharos.models.TaskData
 import kotlin.io.path.*
 import kotlin.io.path.Path
 
@@ -58,7 +59,7 @@ class TemporalDao {
      * @return an empty list if not exists
      * @return a list of tasks if the list already exists
      */
-    fun create(task: Task) {
+    fun create(task: TaskData) {
         if (taskListIsEmpty){
             taskFilePath.writeText(Json.encodeToString(listOf(task)))
         } else {

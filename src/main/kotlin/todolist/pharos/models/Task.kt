@@ -16,7 +16,6 @@ import todolist.pharos.models.Task.Priority.*
  *  @see Priority
  *  @since 1.2.0
  */
-
 @Serializable
 class Task(
     val id: Int,

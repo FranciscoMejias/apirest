@@ -2,6 +2,7 @@ package todolist.pharos.dao
 
 import org.junit.jupiter.api.Test
 
+
 import org.junit.jupiter.api.Assertions.*
 import todolist.pharos.models.Task
 import todolist.pharos.models.TaskData
@@ -13,6 +14,7 @@ internal class TemporalDaoTest {
 
     @Test
     fun getAll() {
+        post()
         val getAll = dao.getAll()
         assertEquals(listOf<Task>(), getAll)
     }
@@ -35,6 +37,7 @@ internal class TemporalDaoTest {
 
     @Test
     fun getFromId() {
+
     }
 
     @Test

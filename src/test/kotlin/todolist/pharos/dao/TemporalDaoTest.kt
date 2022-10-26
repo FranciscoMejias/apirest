@@ -6,25 +6,33 @@ import org.junit.jupiter.api.Assertions.*
 import todolist.pharos.models.Task
 import todolist.pharos.models.TaskData
 import java.nio.file.Path
+import kotlin.io.path.*
 
 internal class TemporalDaoTest {
-    val dao = TemporalDao(Path.of("testing"))
-    private val randomId = (0..1000).random()
+    private val packageTesting = Path.of("testing")
+    private val dao get() = TemporalDao(packageTesting.fileName)
 
-    @Test
-    fun getAll() {
-        val getAll = dao.getAll()
-        assertEquals(listOf<Task>(), getAll)
+    private fun removeIfExistTestingPackage() {
+        if (packageTesting.exists()) {
+            Path.of(packageTesting.pathString, "task.json").deleteIfExists()
+        }
+        packageTesting.deleteIfExists()
     }
 
-    fun post (){
-        val task = Task(
-            randomId,
-            "Hacer la tarea",
+    private fun post (){
+        dao.create(TaskData(
+            "Testing",
             false,
             1,
             Task.Priority.NONE
-        )
+        ))
+    }
+
+    @Test
+    fun getAll() {
+        removeIfExistTestingPackage()
+        val getAll = dao.getAll()
+        assertEquals(listOf<Task>(), getAll)
     }
     @Test
     fun getAllAfterPost() {

@@ -18,7 +18,7 @@ class TemporalDao(
     private val taskFilePath : Path = Path(dadesPath.pathString, "task.json")
 ) {
 
-    private val taskListIsEmpty get() = taskFilePath.readText().isEmpty()
+    private val taskListIsEmpty get() = readTaskFile.isEmpty()
 
     init {
         if (dadesPath.notExists()) {
@@ -26,6 +26,7 @@ class TemporalDao(
         }
         if (taskFilePath.notExists()) {
             taskFilePath.createFile()
+            taskFilePath.writeText(Json.encodeToString(listOf<Task>()))
         }
     }
 
@@ -69,15 +70,21 @@ class TemporalDao(
      * @return A list of tasks if the list already exists
      */
     fun create(taskData: TaskData): Task {
-        val task = taskCreation(taskData)
-        if (taskListIsEmpty){
+        return if (taskListIsEmpty){
+            val task = Task(0,
+                taskData.content,
+                taskData.check,
+                taskData.position,
+                taskData.priority)
             taskFilePath.writeText(Json.encodeToString(listOf(task)))
+            task
         } else {
+            val task = taskCreation(taskData)
             val taskList = readTaskFile.toMutableList()
             taskList.add(task)
             rewriteTaskJson(taskList)
+            task
         }
-        return task
     }
 
     /**

@@ -1,0 +1,14 @@
+GET http://0.0.0.0:8080/task
+
+###
+
+POST http://0.0.0.0:8080/task
+Content-Type: application/json
+{
+"content":"hola",
+"check":false,
+"position":1,
+"priority":"0"
+}
+
+###

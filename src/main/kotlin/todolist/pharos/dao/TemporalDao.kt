@@ -14,8 +14,8 @@ import kotlin.io.path.*
  * @since 1.0.1
  */
 class TemporalDao(
-    private val dadesPath : Path = Path("dades"),
-    private val taskFilePath : Path = Path(dadesPath.pathString, "task.json")
+    private val dadesPath: Path = Path("dades"),
+    private val taskFilePath: Path = Path(dadesPath.pathString, "task.json")
 ) {
 
     private val taskListIsEmpty get() = readTaskFile.isEmpty()
@@ -30,8 +30,9 @@ class TemporalDao(
         }
     }
 
-    private val readTaskFile: List<Task> get() =
-        Json.decodeFromString(taskFilePath.readText())
+    private val readTaskFile: List<Task>
+        get() =
+            Json.decodeFromString(taskFilePath.readText())
 
     private fun newId() = readTaskFile.maxBy { it.id }.id + 1
 
@@ -58,10 +59,10 @@ class TemporalDao(
     private fun taskCreation(taskData: TaskData): Task =
         Task(
             newId(),
-            taskData.content,
-            taskData.check,
-            taskData.position,
-            taskData.priority
+            taskData.body,
+            taskData.checked,
+            taskData.pos,
+            taskData.prio
         )
 
     /**
@@ -70,12 +71,14 @@ class TemporalDao(
      * @return A list of tasks if the list already exists
      */
     fun create(taskData: TaskData): Task {
-        return if (taskListIsEmpty){
-            val task = Task(0,
-                taskData.content,
-                taskData.check,
-                taskData.position,
-                taskData.priority)
+        return if (taskListIsEmpty) {
+            val task = Task(
+                0,
+                taskData.body,
+                taskData.checked,
+                taskData.pos,
+                taskData.prio
+            )
             taskFilePath.writeText(Json.encodeToString(listOf(task)))
             task
         } else {
@@ -94,7 +97,7 @@ class TemporalDao(
      */
     fun delete(id: Int): Boolean {
         val list = readTaskFile.toMutableList()
-        return if (list.removeIf{ it.id == id }) {
+        return if (list.removeIf { it.id == id }) {
             rewriteTaskJson(list)
             true
         } else {
@@ -111,10 +114,10 @@ class TemporalDao(
         return if (!readTaskFile.contains(task)) {
             val list = readTaskFile.toMutableList()
             list.find { it.id == task.id }?.changeTaskParameters(
-                task.content,
-                task.check,
-                task.position,
-                task.priority
+                task.body,
+                task.checked,
+                task.pos,
+                task.prio
             ) ?: return false
             rewriteTaskJson(list)
             true
@@ -123,4 +126,3 @@ class TemporalDao(
         }
     }
 }
-

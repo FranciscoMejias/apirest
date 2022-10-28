@@ -11,7 +11,7 @@ import kotlin.io.path.*
 
 /**
  * @author Pharos
- * @since 1.0.0
+ * @since 1.0.1
  */
 class TemporalDao(
     private val dadesPath : Path = Path("dades"),
@@ -107,20 +107,20 @@ class TemporalDao(
      * @return False if task is not found
      * @return True if the task was found and rewritten
      */
-    fun update(task: Task): Boolean =
-        if (!readTaskFile.contains(task)) {
+    fun update(task: Task): Boolean {
+        return if (!readTaskFile.contains(task)) {
             val list = readTaskFile.toMutableList()
-            task.changeTaskParameters(
+            list.find { it.id == task.id }?.changeTaskParameters(
                 task.content,
                 task.check,
                 task.position,
                 task.priority
-            )
-            list.add(task)
+            ) ?: return false
             rewriteTaskJson(list)
             true
         } else {
             false
         }
+    }
 }
 

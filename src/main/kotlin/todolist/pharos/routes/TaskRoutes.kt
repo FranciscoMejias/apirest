@@ -42,7 +42,17 @@ fun Route.taskRouting() {
 
         delete("{id?}") {
             val id = call.parameters["id"]?.toIntOrNull() ?: return@delete call.badRequest()
-            temporalDao.delete(id)
+            if (temporalDao.delete(id)) {
+                call.respondText(
+                    "OK",
+                    status = HttpStatusCode.OK
+                )
+            } else {
+                call.respondText(
+                    "Not Found",
+                    status = HttpStatusCode.NotFound
+                )
+            }
         }
 
         put("{id?}") {

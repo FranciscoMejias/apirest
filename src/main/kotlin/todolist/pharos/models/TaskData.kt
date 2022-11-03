@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class TaskData(
-    var content: String,
-    var check: Boolean,
-    var position: Int,
-    var priority: Int
+    var body: String,
+    var checked: Boolean,
+    var pos: Int,
+    var prio: Int
 )

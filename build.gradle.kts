@@ -22,6 +22,10 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks {
+    create("stage").dependsOn("installDist")
+}
+
 repositories {
     mavenCentral()
 }
